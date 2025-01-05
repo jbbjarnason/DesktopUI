@@ -39,6 +39,37 @@ To build native applications for Windows, just type `make`. This assumes that GN
 * glib-2.0
 * libappindicator3
 
+### NixOS
+
+You can point to the flake.nix in this repository to build the application.
+
+Example in your flake.nix:
+
+```nix
+{
+  description = "My flake dependencies";
+
+  inputs = {
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-24.11";
+    zerotier-desktop-ui.url = "github:zerotier/DesktopUI/main";
+  };
+
+  outputs = { self, nixpkgs, zerotier-desktop-ui }: {
+    nixosConfigurations."your hostname" = nixpkgs.lib.nixosSystem {
+      system = "x86_64-linux";
+      modules = [
+        ./configuration.nix
+        {
+          environment.systemPackages = [
+            zerotier-desktop-ui.packages.x86_64-linux.desktopui
+          ];
+        }
+      ];
+    };
+  };
+}
+```
+
 # Directly Incorporated Third Party Code
 
 The ZeroTier desktop UI uses forked and slightly modified versions of the following third party code:
